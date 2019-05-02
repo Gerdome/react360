@@ -13,19 +13,21 @@ export default class react360 extends React.Component {
   state = {
     counter : 0,
     console: '',
-    aov: null,
+    aov: [0,0,0],
     isLoading:true
   };
 
   _incrementCounter = () => {
+  
+  
     
     this.setState({
-      console.log('test');
       counter : (this.state.counter += 1),
       aov: VrHeadModel.rotation(),
       isLoading: false
     });
     
+    console.log(this.state.aov[0]);
     
   };
   
