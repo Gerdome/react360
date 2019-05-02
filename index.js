@@ -4,16 +4,47 @@ import {
   StyleSheet,
   Text,
   View,
+  VrHeadModel,
+  VrButton,
 } from 'react-360';
 
 export default class react360 extends React.Component {
+
+  state = {
+    counter : 0,
+    console: '',
+    aov: null,
+    isLoading:true
+  };
+
+  _incrementCounter = () => {
+    
+    this.setState({
+      console.log('test');
+      counter : (this.state.counter += 1),
+      aov: VrHeadModel.rotation(),
+      isLoading: false
+    });
+    
+    
+  };
+  
   render() {
+  
+    //const xRotRounded =  this.state.aov;
+	  //const yRotRounded =  20;
+     
     return (
-      <View style={styles.panel}>
+       <View style={styles.panel}>
         <View style={styles.greetingBox}>
-          <Text style={styles.greeting}>
-            Welcome to React 360
+          <VrButton onClick={this._incrementCounter}>
+            <Text style={styles.greeting}>You've clicked me {this.state.counter} times.</Text>
+          </VrButton>
+          
+          <Text style = {styles.greeting}>
+           {this.state.aov}
           </Text>
+          
         </View>
       </View>
     );
