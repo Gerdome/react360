@@ -1,55 +1,97 @@
 import React from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  VrHeadModel,
-  VrButton,
-} from 'react-360';
+import {StyleSheet, AppRegistry, asset, Pano, Text, View, VrHeadModel, AsyncStorage, localStorage } from 'react-360';
+const RCTDeviceEventEmitter = require('RCTDeviceEventEmitter');
+import Cookies from 'universal-cookie';
+import axios from 'axios';
 
-export default class react360 extends React.Component {
 
-  state = {
-    counter : 0,
-    console: '',
-    aov: [0,0,0],
-    isLoading:true
-  };
+//const fs = require('fs')
 
-  _incrementCounter = () => {
-  
-  
+
+class react360 extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			aov: [0,0,0],
+			colorX: 255,
+      colorY: 0,
+      persons: [],
+      data: 'test',
+    }
+   
+    const cookies = new Cookies();
+      
+		RCTDeviceEventEmitter.addListener('onReceivedInputEvent', e => {
+						this.setState({
+        aov: VrHeadModel.rotation()
+      })
+
+      this.saveData();
+
+        });
+      }
+
+      componentDidMount() {
+        axios.get(`https://jsonplaceholder.typicode.com/users`)
+          .then(res => {
+            const persons = res.data;
+            this.setState({ persons });
+            console.log(this.state.persons);
+          })
+      }
+
+      saveData() {
+        const message = { 
+          x_axis:  Number((this.state.aov[0]).toFixed(0)),
+          y_axis: Number((this.state.aov[1]).toFixed(0))
+          }  
+
+        
+        axios
+          .post('http://ec2-18-197-31-208.eu-central-1.compute.amazonaws.com:8010/api/react/create/', message)
+          .then(response => {  
+            // if request successfull navigate to detail view page of created meal
+          })
+          .catch(error => console.log(error));  
+      }
     
-    this.setState({
-      counter : (this.state.counter += 1),
-      aov: VrHeadModel.rotation(),
-      isLoading: false
-    });
-    
-    console.log(this.state.aov[0]);
-    
-  };
-  
+
+      async saveItem() {
+        try {
+          await AsyncStorage.setItem('storage_Key', 'stored value')
+        } catch (error) {
+          console.error('AsyncStorage error: ' + error.message);
+        }
+      }
+
+      async getItem() {
+        try {
+          const value = await AsyncStorage.getItem('storage_Key');
+          if (value !== null) {
+            // We have data!
+            console.log(value);
+          }
+        } catch (error) {
+          // Error retrieving data
+        }
+      }
+
+
   render() {
-  
-    //const xRotRounded =  this.state.aov;
-	  //const yRotRounded =  20;
-     
-    return (
-       <View style={styles.panel}>
-        <View style={styles.greetingBox}>
-          <VrButton onClick={this._incrementCounter}>
-            <Text style={styles.greeting}>You've clicked me {this.state.counter} times.</Text>
-          </VrButton>
-          
+
+	const xRotRounded = Number((this.state.aov[0]).toFixed(0))
+	const yRotRounded = Number((this.state.aov[1]).toFixed(0))
+	
+	return (
+	  <View style={styles.panel}>
+        <View style={styles.greetingBox}>          
           <Text style = {styles.greeting}>
-           {this.state.aov}
+          Air BnB VR Test
           </Text>
           
         </View>
       </View>
-    );
+	);
   }
 };
 
