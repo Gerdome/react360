@@ -20,6 +20,9 @@ class react360 extends React.Component {
     }
    
     const cookies = new Cookies();
+    
+    // Log available listeners
+		console.log('RCT Signals', RCTDeviceEventEmitter.addListener().subscriber._subscriptionsForType)
       
 		RCTDeviceEventEmitter.addListener('onReceivedInputEvent', e => {
 						this.setState({
@@ -29,6 +32,17 @@ class react360 extends React.Component {
       this.saveData();
 
         });
+        
+       
+   //   window.setInterval(e =>{
+   //     	this.setState({
+   //     aov: VrHeadModel.rotation()
+   //   })
+
+   //   this.saveData();
+   //   }, 500);  
+        
+        
       }
 
       componentDidMount() {
@@ -41,16 +55,22 @@ class react360 extends React.Component {
       }
 
       saveData() {
+      
+      var time = new Date().getTime();
+      var date = new Date(time);
+      
         const message = { 
+          
+          timestamp : date.toString(),
           x_axis:  Number((this.state.aov[0]).toFixed(0)),
-          y_axis: Number((this.state.aov[1]).toFixed(0))
+          y_axis: Number((this.state.aov[1]).toFixed(0)),
+          
           }  
 
         
         axios
           .post('http://ec2-18-197-31-208.eu-central-1.compute.amazonaws.com:8010/api/react/create/', message)
           .then(response => {  
-            // if request successfull navigate to detail view page of created meal
           })
           .catch(error => console.log(error));  
       }
