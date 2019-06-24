@@ -66,10 +66,10 @@ class react360 extends React.Component {
           y_axis: Number((this.state.aov[1]).toFixed(0)),
           
           }  
-
+  
         
         axios
-          .post('http://ec2-18-197-31-208.eu-central-1.compute.amazonaws.com:8010/api/react/create/', message)
+          .post('http://ec2-3-121-239-161.eu-central-1.compute.amazonaws.com:8010/api/react/create/', message)
           .then(response => {  
           })
           .catch(error => console.log(error));  
