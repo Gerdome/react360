@@ -5,8 +5,6 @@ import Cookies from 'universal-cookie';
 import axios from 'axios';
 
 
-//const fs = require('fs')
-
 
 class react360 extends React.Component {
 	constructor(props) {
@@ -24,6 +22,7 @@ class react360 extends React.Component {
     // Log available listeners
 		console.log('RCT Signals', RCTDeviceEventEmitter.addListener().subscriber._subscriptionsForType)
       
+    // Once the angle of the camera changes --> get angle of rotation and save data
 		RCTDeviceEventEmitter.addListener('onReceivedInputEvent', e => {
 						this.setState({
         aov: VrHeadModel.rotation()
@@ -31,33 +30,19 @@ class react360 extends React.Component {
 
       this.saveData();
 
-        });
-        
-       
-   //   window.setInterval(e =>{
-   //     	this.setState({
-   //     aov: VrHeadModel.rotation()
-   //   })
-
-   //   this.saveData();
-   //   }, 500);  
-        
-        
+        });        
       }
 
       componentDidMount() {
-        axios.get(`https://jsonplaceholder.typicode.com/users`)
-          .then(res => {
-            const persons = res.data;
-            this.setState({ persons });
-            console.log(this.state.persons);
-          })
       }
 
+      // save current time stamp and extract x and y axis coordinates from VR rotation
       saveData() {
       
       var time = new Date().getTime();
       var date = new Date(time);
+      
+      // prepare data for API call
       
         const message = { 
           
@@ -67,7 +52,8 @@ class react360 extends React.Component {
           
           }  
   
-        
+      // save data through API call in Django REST Framework
+      
         axios
           .post('http://ec2-3-121-239-161.eu-central-1.compute.amazonaws.com:8010/api/react/create/', message)
           .then(response => {  
